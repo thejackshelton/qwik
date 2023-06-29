@@ -77,6 +77,7 @@ export interface RenderSSROptions {
     containsDynamic: boolean,
     textNodes: Map<string, string>
   ) => Promise<JSXNode>;
+  manifestHash: string;
 }
 
 export interface SSRContext {
@@ -126,6 +127,19 @@ export const _renderSSR = async (node: JSXNode, opts: RenderSSROptions) => {
   const doc = createDocument();
   const rCtx = createRenderContext(doc as any, containerState);
   const headNodes = opts.beforeContent ?? [];
+  if (qDev) {
+    if (
+      root in phasingContent ||
+      root in emptyElements ||
+      root in tableContent ||
+      root in startPhasingContent ||
+      root in invisibleElements
+    ) {
+      throw new Error(
+        `The "containerTagName" can not be "${root}". Please choose a different tag name like: "div", "html", "custom-container".`
+      );
+    }
+  }
   const ssrCtx: SSRContext = {
     $static$: {
       $contexts$: [],
@@ -150,6 +164,7 @@ export const _renderSSR = async (node: JSXNode, opts: RenderSSROptions) => {
     'q:render': qRender,
     'q:base': opts.base,
     'q:locale': opts.serverData?.locale,
+    'q:manifest-hash': opts.manifestHash,
   };
   const children = root === 'html' ? [node] : [headNodes, node];
   if (root !== 'html') {
@@ -701,6 +716,11 @@ This goes against the HTML spec: https://html.spec.whatwg.org/multipage/dom.html
             node
           );
         }
+      } else if (tagName in htmlContent) {
+        throw createJSXError(
+          `<${tagName}> can not be rendered because its parent is not a <html> element. Make sure the 'containerTagName' is set to 'html' in entry.ssr.tsx`,
+          node
+        );
       }
       if (tagName in startPhasingContent) {
         flags |= IS_PHASING;

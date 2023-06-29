@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - next
+      - qwik-labs
   workflow_dispatch:
     inputs:
       disttag:
@@ -50,6 +51,10 @@ jobs:
               - 'packages/qwik/src/**/*.rs'
               - 'packages/qwik-city/**/*.ts'
               - 'packages/qwik-city/**/*.tsx'
+              - 'packages/qwik-labs/package.json'
+              - 'packages/qwik-labs/src/**/*.ts'
+              - 'packages/qwik-labs/src/**/*.tsx'
+              - 'packages/qwik-labs/src-vite/**/*.ts'
               - 'packages/eslint-plugin-qwik/**/*.ts'
               - 'starters/apps/**/*.ts'
               - 'starters/apps/**/*.tsx'
@@ -390,7 +395,7 @@ jobs:
 
       - name: Print QwikLabs Lib Build
         if: ${{ needs.changes.outputs.fullbuild == 'true' }}
-        run: tree packages/qwik-labs/lib/ tree packages/qwik-labs/lib-types/  tree packages/qwik-labs/vite/
+        run: tree packages/qwik-labs/lib/ packages/qwik-labs/lib-types/ packages/qwik-labs/vite/
 
       - name: Upload QwikLabs Build Artifacts
         if: ${{ needs.changes.outputs.fullbuild == 'true' }}
@@ -449,6 +454,9 @@ jobs:
           mv dist-dev-create-qwik/* packages/create-qwik/dist/
           mkdir -p packages/eslint-plugin-qwik/dist/
           mv dist-dev-eslint-plugin-qwik/* packages/eslint-plugin-qwik/dist/
+          mv builderio-qwiklabs-distribution/lib packages/qwik-labs/lib
+          mv builderio-qwiklabs-distribution/lib-types packages/qwik-labs/lib-types
+          mv builderio-qwiklabs-distribution/vite/* packages/qwik-labs/vite/
 
       - name: Install NPM Dependencies
         run: pnpm install --frozen-lockfile
