@@ -2,15 +2,16 @@
 title: Cookbook | Modal
 contributors:
   - mhevery
+  - thejackshelton
 ---
 
 import CodeSandbox, {CodeFile} from '../../../../components/code-sandbox/index.tsx';
 
 # Modals
 
-A common problem in front-end development is to pop up a modal dialog from a component. The complication is that the modal dialog needs to be rendered in a different part of the DOM tree, and the component that triggers the model needs to a way to affect the location of rendering.
+A common problem in front-end development is creating a modal dialog popup from a component. This is because the modal dialog needs to be rendered in a different part of the DOM tree, and the component that triggers the modal needs a way to affect the location of rendering.
 
-In other frameworks, this is often solved by dedicated API such as [`createPortal()`](https://react.dev/reference/react-dom/createPortal). However such APIs don't work well with server-side rendering and so an alternative approach is needed.
+In other frameworks, this is often solved by using a dedicated API such as [`createPortal()`](https://react.dev/reference/react-dom/createPortal). However such APIs don't work well with server-side rendering, and so an alternative approach is needed.
 
 ## Alternatives
 
@@ -41,7 +42,7 @@ Let's break down the solution into steps:
 ### Using the PopupManager
 
 Let's assume that we already have a `PopupManager` and let's focus on how it is used first.
-1. We get a hold of the `PopuManager` API through: 
+1. We get a hold of the `PopupManager` API through: 
    ```tsx
    const popupManager = useContext(PopupManagerContext);
    ```
@@ -53,7 +54,7 @@ Let's assume that we already have a `PopupManager` and let's focus on how it is 
    })
    ```
    > Notice the passing of additional properties to the popup.
-3. Finally we can use `popupManager` API to hide the popup:
+3. Finally we can use our `popupManager` API to hide the popup:
    ```tsx
    await popupManager.hide();
    ```
@@ -219,7 +220,7 @@ The styling for the `PopupManager` component is (`popup-manager.css`):
 </CodeFile>
 
 
-## Adding `PopuManager` to root `layout.tsx`
+## Adding `PopupManager` to root `layout.tsx`
 
 <CodeFile src="/src/routes/demo/cookbook/modal/layout.tsx">
 ```tsx
